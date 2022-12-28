@@ -1,42 +1,65 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require("helmet");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const authRoutes = require("./routes/auth");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(helmet())
 
+// Connect to MongoDB
+require("./config/db");
+
+
+const mongoose = require("mongoose");
+const Sector = require('./models/Sectors');
+
+
+
+const sector = new Sector({
+  name:'Manufacturing',
+  subsectors:[
+    {name:'Construction materials'},
+    {name:'Electronics and Optics'},
+    {name:'Food and Beverage',
+    subsectors:[
+        {name:'Bakery & confectionery products'},
+        {name:'Beverages'},
+        {name:'Fish & fish products'},
+        {name:'Meat & meat products'},
+        {name:'Milk & dairy products'},
+        {name:'Other'},
+        {name:'Sweets & snack food'}
+    ]},
+    {name:'Fourniture',
+    subsectors:[
+        {name:'Bathroom/sauna'},
+        {name:'Bedroom'},
+        {name:'Children’s room'},
+        {name:'Kitchen'},
+        {name:'Living room'},
+        {name:'Office'},
+       {name:' Other (Furniture)'},
+       {name:' Outdoor'},
+        {name:'Project furniture'}
+    ]}
+  ]
+});
+
+sector.save((error) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log("Sector saved!");
+  }
+});
+// Routes
+app.use("/auth", authRoutes);
 // Add your routes and middleware here
-app.post('/register', async (req, res) => {
-    try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      // Store the email and hashed password in your database
-      res.sendStatus(200);
-    } catch (error) {
-      res.sendStatus(500);
-    }
-  });
-  
-  app.post('/login', async (req, res) => {
-    try {
-      // Look up the user in the database
-      const user = await User.findOne({ email: req.body.email });
-      if (!user) return res.status(400).send('Email or password is incorrect');
-  
-      // Compare the hashed passwords
-      const isMatch = await bcrypt.compare(req.body.password, user.password);
-      if (!isMatch) return res.status(400).send('Email or password is incorrect');
-  
-      // Create a JWT token
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: 3600,
-      });
-      res.send({ token });
-    } catch (error) {
-      res.sendStatus(500);
-    }
-  });
+
   
 
 const port = process.env.PORT || 5000;
