@@ -56,6 +56,31 @@ sector.save((error) => {
     console.log("Sector saved!");
   }
 });
+
+
+
+const jwt = require("jsonwebtoken");
+
+// Add this middleware function to verify the JWT
+const verifyJWT = (req, res, next) => {
+  const token = req.header("auth-token");
+  if (!token) return res.status(401).send("Access denied");
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (err) {
+    res.status(400).send("Invalid token");
+  }
+};
+
+// Use the middleware on the routes that require authentication
+app.get("/protected-route", verifyJWT, (req, res) => {
+  res.send("Welcome to the protected route!");
+});
+
+
 // Routes
 app.use("/auth", authRoutes);
 // Add your routes and middleware here
