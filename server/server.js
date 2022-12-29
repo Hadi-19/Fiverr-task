@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require("helmet");
+const helmet = require('helmet');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const authRoutes = require("./routes/auth");
@@ -59,10 +59,10 @@ sector.save((error) => {
 
 
 
-const jwt = require("jsonwebtoken");
+
 
 // Add this middleware function to verify the JWT
-const verifyJWT = (req, res, next) => {
+/*const verifyJWT = (req, res, next) => {
   const token = req.header("auth-token");
   if (!token) return res.status(401).send("Access denied");
 
@@ -78,7 +78,7 @@ const verifyJWT = (req, res, next) => {
 // Use the middleware on the routes that require authentication
 app.get("/protected-route", verifyJWT, (req, res) => {
   res.send("Welcome to the protected route!");
-});
+});*/
 
 
 // Routes

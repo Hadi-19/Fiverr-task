@@ -4,7 +4,27 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+// Add this middleware function to verify the JWT
+const verifyJWT = (req, res, next) => {
+  const token = req.header("auth-token");
+  if (!token) return res.status(401).send("Access denied");
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (err) {
+    res.status(400).send("Invalid token");
+  }
+};
+
+// Use the middleware on the routes that require authentication
+router.get("/", verifyJWT, (req, res) => {
+  res.send("Welcome to the protected route!");
+});
+
 router.post("/signup", async (req, res) => {
+  
     try{
   // Check if email already exists
   const emailExists = await User.findOne({ email: req.body.email });
@@ -30,15 +50,17 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+  
     try{
   // Check if email exists
   const user = await User.findOne({ email: req.body.email });
   if (!user) return res.status(400).send("Email or password is incorrect");
 
   // Check if password is correct
+  
   const validPassword = await bcrypt.compare(req.body.password, user.password);
-  if (!validPassword)
-    return res.status(400).send("Email or password is incorrect");
+  
+  if (!validPassword)    return res.status(400).send("Email or password is incorrect");
 
   // Create and assign JWT
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
