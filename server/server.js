@@ -14,7 +14,7 @@ app.use(helmet())
 require("./config/db");
 
 
-const mongoose = require("mongoose");
+
 const Sector = require('./models/Sectors');
 
 

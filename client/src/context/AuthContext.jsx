@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         console.log('hi')
       const res = await axios.post("http://localhost:5000/auth/login", { email, password });
       console.log(res)
+      localStorage.setItem('token',res.data)
       setIsAuthenticated(true);
       setError(null);
     } catch (err) {
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }) => {
         console.log('heating ')
       const res = await axios.post("http://localhost:5000/auth/signup", { name, email, password });
      // setIsAuthenticated(true);
+     localStorage.setItem('token',res.data)
      setRedirectToLogin(true);
      
       setError(null);
