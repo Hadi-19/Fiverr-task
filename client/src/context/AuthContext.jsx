@@ -12,22 +12,26 @@ export const AuthProvider = ({ children }) => {
     // Check if user is authenticated on page load
     const checkAuth = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/auth");
+        const res = await axios.get("http://localhost:5000/auth",{headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}});
         setIsAuthenticated(true);
       } catch (err) {
         setIsAuthenticated(false);
       }
     };
-    checkAuth();
+    
+    const user = JSON.parse(localStorage.getItem('user'))
+
+    if (user) {
+     checkAuth();
+    }
   }, []);
 
   // Login function
   const login = async (email, password) => {
     try {
-        console.log('hi')
       const res = await axios.post("http://localhost:5000/auth/login", { email, password });
-      console.log(res)
-      localStorage.setItem('token',res.data)
+      
+      localStorage.setItem('user',JSON.stringify(res.data))
       setIsAuthenticated(true);
       setError(null);
     } catch (err) {
@@ -39,11 +43,11 @@ export const AuthProvider = ({ children }) => {
   // Signup function
   const signup = async (name, email, password) => {
     try {
-        console.log('heating ')
+       
       const res = await axios.post("http://localhost:5000/auth/signup", { name, email, password });
      // setIsAuthenticated(true);
-     localStorage.setItem('token',res.data)
-     setRedirectToLogin(true);
+     localStorage.setItem('user',JSON.stringify(res.data))
+     setIsAuthenticated(true)
      
       setError(null);
     } catch (err) {
@@ -54,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, signup, error,redirectToLogin,setRedirectToLogin }}
+      value={{ isAuthenticated,setIsAuthenticated, login, signup, error,redirectToLogin,setRedirectToLogin }}
     >
       {children}
     </AuthContext.Provider>

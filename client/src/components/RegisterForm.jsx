@@ -1,16 +1,12 @@
-import { useContext } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
-const AuthForm = () => {
-  const { login, signup, isAuthenticated, error,redirectToLogin,setRedirectToLogin } = useContext(AuthContext);
+
+const RegisterForm = () => {
+  const { login, signup, isAuthenticated, error,redirectToLogin,setRedirectToLogin } = useAuthContext()
 
   // Form submission handlers
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const { email, password } = e.target.elements;
-    login(email.value, password.value);
-  };
+  
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -53,4 +49,4 @@ const AuthForm = () => {
 </>);
 }}
 
-export default AuthForm;
+export default RegisterForm;

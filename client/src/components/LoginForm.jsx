@@ -1,10 +1,9 @@
-import React from 'react'
-import { useContext } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+
 
 const LoginForm = () => {
-  const { login, signup, isAuthenticated, error } = useContext(AuthContext);
+  const { login, signup, isAuthenticated, error } = useAuthContext()
 
   // Form submission handlers
   const handleLogin = (e) => {
@@ -13,17 +12,13 @@ const LoginForm = () => {
     login(email.value, password.value);
   };
 
-  const handleSignup = (e) => {
-    e.preventDefault();
-    const { name, email, password } = e.target.elements;
-    signup(name.value, email.value, password.value);
-  };
+ 
 
   // Render login or signup form based on authenticated state
-  if (isAuthenticated) {
+  /*if (isAuthenticated) {
    return <Navigate replace to='/protected-route'/>
   }
-  else {
+  else {*/
     return(
     <div>
     {error && <p>{error}</p>}
@@ -41,10 +36,10 @@ const LoginForm = () => {
       <button type="submit">Log in</button>
       </form>
       <br />
-      <Link  to="/">Sign up</Link>
+      <Link  to="/signup">Sign up</Link>
       </div>
   )
-  }
+  //}
 }
 
 export default LoginForm

@@ -20,6 +20,7 @@ const verifyJWT = (req, res, next) => {
 
 // Use the middleware on the routes that require authentication
 router.get("/", verifyJWT, (req, res) => {
+  console.log('welcome')
   res.send("Welcome to the protected route!");
 });
 
@@ -48,10 +49,10 @@ router.post("/signup", async (req, res) => {
     res.status(400).send(err);
   }*/
   // Create and assign JWT
-  const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send(token);
+  const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET,{ expiresIn: '3d' });
+  res.header("auth-token", token).send({token,name:savedUser.name});
     }catch (error) {
-        res.status(400).send(err);
+        res.status(400).send(error);
       }
 });
 
@@ -70,9 +71,10 @@ router.post("/login", async (req, res) => {
 
   // Create and assign JWT
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send(token);
+  res.header("auth-token", token).send({token,name:user.name});
     }catch (error) {
-        res.status(500).send(err);
+      console.log(error)
+        res.status(500).send(error);
       }
 });
 
