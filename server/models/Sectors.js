@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 require('dotenv').config()
 const sectorSchema = new mongoose.Schema({
     
-          name: String,
+        /*  name: String,
           subsectors: [
             {
               name: String,
@@ -10,7 +10,10 @@ const sectorSchema = new mongoose.Schema({
             },
             
           ]
-        ,
+        ,*/
+        value:{type:String},
+        text:{type:String}
+        //,space:{type:String}
         
       
 });
@@ -37,19 +40,3 @@ module.exports=Sector;
   }
   */
 
-
- /* db.collection("people").insertOne({
-    _id: ObjectId(),
-    name: "John Smith",
-    sectors: [
-      {
-        name: "Manufacturing",
-        subsectors: [
-          { name: "Construction materials" },
-          { name: "Electronics and Optics" },
-          {
-            name: "Food and Beverage",
-            subsectors: [
-              { name: "Bakery & confectionery products" },
-              { name: "Beverages*/
-  

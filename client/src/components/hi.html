@@ -1,44 +1,23 @@
-import axios from 'axios'
-import { useEffect } from 'react'
-import { useState } from 'react'
-
-//import './App.css'
-
-function MainForm() {
-  const [sectors, setSectors] = useState([])
-  useEffect(()=>{
-    const fetchSectors = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/sectors",{headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}});
-        console.log(res.data)
-        setSectors(res.data)
-      } catch (err) {
-        setSectors([err])
-        console.log(sectors)
-      }
-    };
-    fetchSectors()
-
-
-  },[])
-
-  return (
-    <div className="App">
-      
-      Please enter your name and pick the Sectors you are currently involved in.
-      <br />
-      <br />
-      <label htmlFor="name">Name: </label> 
-      <input type="text" name='name'/>
-      <br />
-      <br />
-      <label htmlFor="sectors">Sectors: </label>
-      <select multiple="" size="5" name='sectors'>
-        {sectors.length>0 && sectors.map(sector=>{
-          return <option key={sector.value} value={sector.value}>{sector.text}</option>
-          //"\u00A0".repeat(sector.space)+
-        })}
-         {/* <option value="1">Manufacturing</option>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    Please enter your name and pick the Sectors you are currently involved in.
+      <br>
+      <br>
+      Name: 
+      <input type="text">
+      <br>
+      <br>
+      Sectors: 
+      <select multiple="" size="5">
+         <option value="1">Manufacturing</option>
          <option value="19">&nbsp;&nbsp;&nbsp;&nbsp;Construction materials</option>
          <option value="18">&nbsp;&nbsp;&nbsp;&nbsp;Electronics and Optics</option>
          <option value="6">&nbsp;&nbsp;&nbsp;&nbsp;Food and Beverage</option>
@@ -116,16 +95,32 @@ function MainForm() {
          <option value="111">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Air</option>
          <option value="114">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rail</option>
          <option value="112">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Road</option>
-         <option value="113">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Water</option> */}
+         <option value="113">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Water</option>
       </select>
-      <br/>
-      <br/>
-      <input type="checkbox"/> Agree to terms
-      <br/>
-      <br/>
-      <input type="submit" value="Save"></input>
-    </div>
-  )
-}
+      <br>
+      <br>
+      <input type="checkbox"> Agree to terms
+      <br>
+      <br>
+      <input type="submit" value="Save">
 
-export default MainForm
+      <script>
+        const selectElement = document.querySelector("select");
+const optionElements = selectElement.querySelectorAll("option");
+
+const sectors = [];
+
+optionElements.forEach((optionElement) => {
+  const value = optionElement.value;
+  const text = optionElement.text//.trim();
+  //const space = optionElement.text.split(" ").length - 1;
+  //const text = optionElement.text.split(" ")[length - 1];
+
+  sectors.push({ value, text });
+});
+
+console.log(sectors);
+
+    </script>
+</body>
+</html>

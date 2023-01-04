@@ -3,20 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const validator=require('validator')
+const verifyJWT=require("../middlewares/verifyJWT")
 
-// Add this middleware function to verify the JWT
-const verifyJWT = (req, res, next) => {
-  const token = req.header("auth-token");
-  if (!token) return res.status(401).send("Access denied");
-
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (err) {
-    res.status(400).send("Invalid token");
-  }
-};
 
 // Use the middleware on the routes that require authentication
 router.get("/", verifyJWT, (req, res) => {
@@ -27,6 +16,15 @@ router.get("/", verifyJWT, (req, res) => {
 router.post("/signup", async (req, res) => {
   
     try{
+      if (!email || !password) {
+        throw Error('All fields must be filled')
+      }
+      if (!validator.isEmail(email)) {
+        throw Error('Email not valid')
+      }
+      if (!validator.isStrongPassword(password)) {
+        throw Error('Password not strong enough')
+      }
   // Check if email already exists
   const emailExists = await User.findOne({ email: req.body.email });
   if (emailExists)
@@ -57,17 +55,20 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  
+  const{email,password}=req.body
     try{
+      if (!email || !password) {
+        throw Error('All fields must be filled')
+      }
   // Check if email exists
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send("Email or password is incorrect");
+  const user = await User.findOne({ email });
+  if (!user) return res.status(400).send("Email is incorrect");
 
   // Check if password is correct
   
-  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  const validPassword = await bcrypt.compare(password, user.password);
   
-  if (!validPassword)    return res.status(400).send("Email or password is incorrect");
+  if (!validPassword)    return res.status(400).send(" password is incorrect");
 
   // Create and assign JWT
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
