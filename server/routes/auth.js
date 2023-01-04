@@ -14,6 +14,8 @@ router.get("/", verifyJWT, (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
+
+  const{name,email,password}=req.body
   
     try{
       if (!email || !password) {
@@ -26,13 +28,13 @@ router.post("/signup", async (req, res) => {
         throw Error('Password not strong enough')
       }
   // Check if email already exists
-  const emailExists = await User.findOne({ email: req.body.email });
+  const emailExists = await User.findOne({ email });
   if (emailExists)
     return res.status(400).send("Email already exists");
 
   // Hash password
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
   // Create new user
   const user = new User({
@@ -48,7 +50,7 @@ router.post("/signup", async (req, res) => {
   }*/
   // Create and assign JWT
   const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET,{ expiresIn: '3d' });
-  res.header("auth-token", token).send({token,name:savedUser.name});
+  res.header("auth-token", token).send({token,email,name});
     }catch (error) {
         res.status(400).send(error);
       }
@@ -72,7 +74,7 @@ router.post("/login", async (req, res) => {
 
   // Create and assign JWT
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-  res.header("auth-token", token).send({token,name:user.name});
+  res.header("auth-token", token).send({token,email,name:user.name});
     }catch (error) {
       console.log(error)
         res.status(500).send(error);

@@ -4,14 +4,14 @@ import { useState } from 'react'
 
 //import './App.css'
 
-function MainForm() {
+function EditUSerDetails() {
   const [sectors, setSectors] = useState([])
   useEffect(()=>{
     const fetchSectors = async () => {
       try {
         const res = await axios.get("http://localhost:5000/sectors",{headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}});
         console.log(res.data)
-        setSectors(res.data)
+        sectors.length===0 && setSectors(res.data)
       } catch (err) {
         setSectors([err])
         console.log(sectors)
@@ -22,20 +22,25 @@ function MainForm() {
 
   },[])
 
+   const handleSubmit=(e)=>{
+    e.preventDefault();
+    }
+
   return (
     <div className="App">
       
       Please enter your name and pick the Sectors you are currently involved in.
       <br />
       <br />
+      <form onSubmit={handleSubmit}>
       <label htmlFor="name">Name: </label> 
       <input type="text" name='name'/>
       <br />
       <br />
       <label htmlFor="sectors">Sectors: </label>
-      <select multiple="" size="5" name='sectors'>
-        {sectors.length>0 && sectors.map(sector=>{
-          return <option key={sector.value} value={sector.value}>{sector.text}</option>
+      <select multiple={true} size="5" name='sectors'>
+        {sectors.length>0 && sectors.map((sector,index)=>{
+          return <option key={index} value={sector.value}>{sector.text}</option>
           //"\u00A0".repeat(sector.space)+
         })}
          {/* <option value="1">Manufacturing</option>
@@ -124,8 +129,9 @@ function MainForm() {
       <br/>
       <br/>
       <input type="submit" value="Save"></input>
+      </form>
     </div>
   )
 }
 
-export default MainForm
+export default EditUSerDetails

@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }) => {
     try {
        
       const res = await axios.post("http://localhost:5000/auth/signup", { name, email, password });
-     // setIsAuthenticated(true);
      localStorage.setItem('user',JSON.stringify(res.data))
      setIsAuthenticated(true)
      
