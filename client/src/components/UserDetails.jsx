@@ -4,8 +4,9 @@ import { useUserInfoContext } from '../hooks/useUserInfoContext'
 const UserDetails = () => {
     const{redirectToEdit,userInfo}=useUserInfoContext()
     const{name,sectors}=userInfo
-    
     if(redirectToEdit){
+        console.log('user info')
+        console.log(userInfo)
         return <Navigate to="/edit"/>;
     } else{
        
@@ -14,7 +15,7 @@ const UserDetails = () => {
         
         <div>Name: {name}</div>
         <ul>
-            {sectors.length>0 && sectors.map(sector=>{
+            {sectors && sectors.length>0 && sectors.map(sector=>{
                 return <li>{sector}</li>
             })}
         </ul>

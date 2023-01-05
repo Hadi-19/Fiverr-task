@@ -1,11 +1,19 @@
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { useUserInfoContext } from '../hooks/useUserInfoContext'
 
 //import './App.css'
 
 function EditUSerDetails() {
+  const{userInfo,submitEditForm}=useUserInfoContext()
+  //for fetching all sectors
   const [sectors, setSectors] = useState([])
+  //for refilling the form
+  const [name, setName] = useState(userInfo?.name || '')
+  const [userSectors, setUserSectors] = useState(userInfo?.sectors || [])
+  const [hasAgree, setHasAgree] = useState( false || userInfo?.hasAgree )
+
   useEffect(()=>{
     const fetchSectors = async () => {
       try {
@@ -21,9 +29,11 @@ function EditUSerDetails() {
 
 
   },[])
-
-   const handleSubmit=(e)=>{
+   
+    const handleSubmit=(e)=>{
     e.preventDefault();
+    
+    submitEditForm(name,userSectors,hasAgree)
     }
 
   return (
@@ -34,11 +44,18 @@ function EditUSerDetails() {
       <br />
       <form onSubmit={handleSubmit}>
       <label htmlFor="name">Name: </label> 
-      <input type="text" name='name'/>
+      <input type="text" name='name' value={name} onChange={e=>setName(e.target.value)} />
       <br />
       <br />
       <label htmlFor="sectors">Sectors: </label>
-      <select multiple={true} size="5" name='sectors'>
+      <select multiple={true} size="5" name='sectors' value={userSectors} onChange={e=>setUserSectors([...e.target.selectedOptions].map(opt => opt.value))} >
+        {
+          /*
+              value={userSectors} onChange={e=>{
+        setUserSectors(e.target.value)
+        console.log(userSectors)}}
+          */ 
+        }
         {sectors.length>0 && sectors.map((sector,index)=>{
           return <option key={index} value={sector.value}>{sector.text}</option>
           //"\u00A0".repeat(sector.space)+
@@ -125,7 +142,7 @@ function EditUSerDetails() {
       </select>
       <br/>
       <br/>
-      <input type="checkbox"/> Agree to terms
+      <input type="checkbox" name="hasAgree"  checked={hasAgree} onChange={e=>setHasAgree(e.target.checked)} /> Agree to terms
       <br/>
       <br/>
       <input type="submit" value="Save"></input>

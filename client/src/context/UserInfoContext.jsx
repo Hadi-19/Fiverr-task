@@ -1,23 +1,38 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
+//const{isAuthenticated}=useAuthContext()
+
+
 
 export const UserInfoContext=createContext()
+
+
 export const UserInfoProvider=({children}) =>{
 
-    const{isAuthenticated}=useAuthContext
-    const [userInfo, setUserInfo] = useState({})
-    const [redirectToEdit, setRedirectToEdit] = useState(true)
 
-   isAuthenticated && useEffect(()=>{
+   
+    const [userInfo, setUserInfo] = useState({})
+    const [redirectToEdit, setRedirectToEdit] = useState(false)
+
+    useEffect(()=>{
         const getUserDetails=async()=>{
             try{
-                const userDetails=await axios
+                const res=await axios
                 .get('http://localhost:5000/sectors/user',{headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}})
-               if(Object.keys(userDetails).length>0){
-                setUserInfo(userDetails);
+               
+                setUserInfo(res.data);
+               if(userInfo.sectors ){
+                if (Object.keys(userInfo.sectors).length>0){
                 setRedirectToEdit(false)
                }
+               else{
+                setRedirectToEdit(true)
+               }
+            }
+            else{
+                setRedirectToEdit(true)
+            }
                
             }
             catch(error){
@@ -25,15 +40,24 @@ export const UserInfoProvider=({children}) =>{
 
             }
         }
-        const email=localStorage.getItem('user').email
+        const email=JSON.parse(localStorage.getItem('user')).email
         
         email && getUserDetails();
 
     },[])
 
+    const submitEditForm=(name,sectors,hasAgree)=>{
+        console.log('here is the submit')
+        console.table(name, sectors, hasAgree)
+        console.log(sectors)
+    }
+
+
+
+
 
     return(
-        <UserInfoContext.Provider value={{userInfo,redirectToEdit}}>
+        <UserInfoContext.Provider value={{userInfo,redirectToEdit,submitEditForm}}>
             {children}
         </UserInfoContext.Provider>
     )
