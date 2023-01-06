@@ -4,6 +4,7 @@ import App from './App'
 import './index.css'
 import { AuthProvider } from "./context/AuthContext";
 import { UserInfoProvider } from './context/UserInfoContext';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 
 

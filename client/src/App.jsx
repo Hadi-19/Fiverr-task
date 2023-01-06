@@ -9,12 +9,14 @@ import { useAuthContext } from './hooks/useAuthContext';
 import Navbar from './components/Navbar';
 import UserDetails from './components/UserDetails';
 import EditUSerDetails from './components/EditUSerDetails';
+import { useUserInfoContext } from './hooks/useUserInfoContext';
 
 
 
 function App() {
  
   const {isAuthenticated}= useAuthContext();
+  const {redirectToEdit}= useUserInfoContext()
 
   
   return (
@@ -24,10 +26,10 @@ function App() {
       <Navbar/>
     <Routes>
       
-        <Route exact path='/' element={
+        <Route exact path='/' element={!redirectToEdit?
             <ProtectedRoute >
             <UserDetails/>
-        </ProtectedRoute>
+        </ProtectedRoute>:<Navigate to="/edit"/>
         }/> 
         <Route exact path='/edit' element={
             <ProtectedRoute >

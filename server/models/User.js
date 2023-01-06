@@ -14,7 +14,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  sectors:[String]
+  sectors:[{type:mongoose.SchemaTypes.ObjectId,ref:"Sector"}],
+  hasAgree:{
+    type:Boolean,
+    default:false
+  }
 },{timestamps:true});
 
 module.exports = mongoose.model("User", userSchema);

@@ -19,8 +19,8 @@ const sectorSchema = new mongoose.Schema({
 });
 
 
-const Sector = mongoose.model("Sector", sectorSchema);
-module.exports=Sector;
+const Sectors = mongoose.model("Sector", sectorSchema);
+module.exports=Sectors;
 
 /*let temp={
     _id: ObjectId(),
