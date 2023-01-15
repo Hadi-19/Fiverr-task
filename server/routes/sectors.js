@@ -21,25 +21,25 @@ router.get('/',async(req,res)=>{
 })
 
 router.get('/user',async(req,res)=>{
-    const user=await User.findById(req.user._id).select("name sectors hasAgree")
+    const user=await User.findById(req.user._id).select("name sectors hasAgree").populate("sectors")
     console.log(user)
     res.send(user)
 })
 router.post('/user',async(req,res)=>{
     try{
     const{name,sectors,hasAgree}=req.body
-    // let sec=[]
-    // for(sect of sectors ){
-    //     let se=await Sectors.find({value:sect}).select('_id')
-    //     sec.push
-    // }
+
+    if(!name) throw Error('name can\'t be empty') 
+    if(!sectors || sectors.length===0) throw Error('please choose at least one sector')
+
     const promises=sectors.map(async(sector)=>{
         const id=await Sectors.find({value:sector}).select('_id text')
         return id[0]
     })
     const ids=await Promise.all(promises);
     console.log(ids)
-   let user=await User.findById(req.user._id)
+   
+    let user=await User.findById(req.user._id)
    user.name=name
    user.sectors=ids
    user.hasAgree=hasAgree

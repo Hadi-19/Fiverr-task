@@ -1,12 +1,27 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { redirect } from "react-router-dom";
+import { Navigate, redirect, useNavigate } from "react-router-dom";
+import { useReducer } from "react";
 //const{isAuthenticated}=useAuthContext()
 
 
 
 export const UserInfoContext=createContext()
+export const userInfoReducer = (state, action) => {
+    switch (action.type) {
+      case 'SET_USER_INFO': 
+        return {
+          userInfo2: action.payload
+        }
+      case 'CREATE_USER_INFO':
+        return {
+          userInfo2: [action.payload, ...state.userInfo]
+        }
+      default:
+        return state
+    }
+  }
 
 
 export const UserInfoProvider=({children}) =>{
@@ -14,59 +29,43 @@ export const UserInfoProvider=({children}) =>{
 
    
     const [userInfo, setUserInfo] = useState({})
+    const dispatchUserInfo=(info)=>{
+       return setUserInfo(info)
+    }
     const [redirectToEdit, setRedirectToEdit] = useState(false)
+    const dispatchRedirectEdit=(bool)=>{
+       return setRedirectToEdit(bool)
+    }
     const [error, setError] = useState(null)
+    //const [submit, setSubmit] = useState(null)
 
-    useEffect(()=>{
-        const getUserDetails=async()=>{
-            try{
-                const res=await axios
-                .get('http://localhost:5000/sectors/user',{headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}})
-               
-                setUserInfo(res.data)
-                console.log(res.data)
-               
-                console.log(userInfo)
-             // console.log(userInfo.sectors.length)
-              //  if (Object.keys(userInfo.sectors).length>0){
-               // if(userInfo?.sectors?.length>0){
-                    setRedirectToEdit(false)
-                    console.log('setted to false')
-                   //  }
-                    // else{
-                    //    console.log('setted true')
-                    //  setRedirectToEdit(true)
-                   //  }
-            }
-           
-               
-            
-            catch(error){
-                setRedirectToEdit(true)
+    const [state, dispatch] = useReducer(userInfoReducer, {
+        userInfo2: null
+      })
+      
 
-            }
-        }
-        const email=JSON.parse(localStorage.getItem('user')).email
-        
-        email && getUserDetails();
-       
 
-    },[])
+    
+
+    
 
     const submitEditForm=async(name,sectors,hasAgree)=>{
+        
        // console.log('here is the submit')
-        console.table(name, sectors, hasAgree)
+        console.log(name, sectors, hasAgree)
         try{
             if(!name) throw Error('name can\'t be empty') 
             if(!sectors || sectors.length===0) throw Error('please choose at least one sector')
             const res=await axios
                 .post('http://localhost:5000/sectors/user',{name,sectors,hasAgree},{ headers:{"auth-token":JSON.parse(localStorage.getItem('user')).token}})
                 setRedirectToEdit(false)
-                console.log(res.data)
+            dispatch('')
+                //console.log(res.data)
                 setError(null)
-                console.log(redirectToEdit)
-                console.log(userInfo)
-                redirect('/')
+               // setSubmit(true)
+                // console.log(redirectToEdit)
+                // console.log(userInfo)
+             //  return <Navigate to='/' replace/>
         }
         catch(e){
             setError(e)
@@ -78,7 +77,7 @@ export const UserInfoProvider=({children}) =>{
 
 
     return(
-        <UserInfoContext.Provider value={{error,userInfo,redirectToEdit,submitEditForm}}>
+        <UserInfoContext.Provider value={{...state,dispatch,error,userInfo,setUserInfo,dispatchUserInfo,redirectToEdit,setRedirectToEdit,dispatchRedirectEdit,submitEditForm}}>
             {children}
         </UserInfoContext.Provider>
     )

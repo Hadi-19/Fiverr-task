@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import { Navigate, redirect } from 'react-router-dom'
+import { Navigate, redirect, useNavigate } from 'react-router-dom'
 import { useUserInfoContext } from '../hooks/useUserInfoContext'
 
 //import './App.css'
@@ -31,13 +31,15 @@ function EditUSerDetails() {
 
 
   },[])
+  const navigate = useNavigate();
    
     const handleSubmit=(e)=>{
     e.preventDefault();
     
     submitEditForm(name,userSectors,hasAgree)
     console.log(redirectToEdit)
-    redirect('/')
+    if(!redirectToEdit) navigate('/') //return <Navigate to='/'/>
+   
     }
    //else{
   return (

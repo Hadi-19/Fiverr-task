@@ -26,10 +26,10 @@ function App() {
       <Navbar/>
     <Routes>
       
-        <Route exact path='/' element={!redirectToEdit?
+        <Route exact path='/' element={
             <ProtectedRoute >
             <UserDetails/>
-        </ProtectedRoute>:<Navigate to="/edit"/>
+        </ProtectedRoute>
         }/> 
         <Route exact path='/edit' element={
             <ProtectedRoute >
